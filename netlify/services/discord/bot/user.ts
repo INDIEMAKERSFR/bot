@@ -128,7 +128,7 @@ const userList = async (interaction: Interaction): Promise<void> => {
     const user = users[index]
     const card = userCard(user)
     // console.error('card', card)
-    await sendChannel(interaction.channel_id, '', card)
+    await sendChannel(interaction.channel_id, '', [card])
   }
   console.error('userList')
   return Promise.resolve()
@@ -149,7 +149,7 @@ const userListStreak = async (interaction: Interaction): Promise<void> => {
     for (let index = 0; index < usersInfoCards.length; index++) {
       const card = usersInfoCards[index]
       // console.error('card', card)
-      await sendChannel(interaction.channel_id, '', card)
+      await sendChannel(interaction.channel_id, '', [card])
     }
     return Promise.resolve()
   } else {
@@ -179,7 +179,7 @@ const userView = async (interaction: Interaction, myId: string, userId: string |
     await sendChannel(interaction.channel_id, `Tu peux aussi voir toute les infos sur la page publique : ${getUserUrl(user)}`)
     await openChannel(myId).then((channel) => {
       console.error('channel', channel)
-      return sendChannel(channel.id, `Voici tes infos complètes :`, card)
+      return sendChannel(channel.id, `Voici tes infos complètes :`, [card])
     })
     return Promise.resolve()
   }
