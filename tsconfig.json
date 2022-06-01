@@ -4,11 +4,11 @@
       "moduleResolution": "node",
       "target": "es2018",
       "esModuleInterop": true,
-      "declaration": true,
+      "declaration": false,
       "outDir": "netlify/built",
       "strict": true,
       "allowJs": true,
-      "sourceMap": true,
+      "sourceMap": false,
     },
     "exclude": [
       "node_modules",
