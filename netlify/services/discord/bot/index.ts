@@ -39,6 +39,7 @@ const im = (option: ApplicationCommandInteractionDataOption, senderId: string): 
 }
 
 const discordInteraction = (interaction: Interaction): Promise<any> => {
+  console.log('discordInteraction', interaction)
   if (interaction && interaction.type === InteractionType.APPLICATION_COMMAND && interaction.data) {
     if (interaction.data.name === 'im' && interaction.data.options && interaction.data.options.length > 0 && interaction.member.user) {
       return im(interaction.data.options[0], interaction.member.user.id)
