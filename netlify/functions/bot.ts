@@ -1,7 +1,7 @@
 import type { Handler } from '@netlify/functions'
 import { InteractionResponseType, InteractionType, verifyKey } from 'discord-interactions'
-import initF from './services/firebase/init'
-import discordInteraction from './services/discord/bot'
+import initF from '../services/firebase/init'
+import discordInteraction from '../services/discord/bot'
 
 export const handler: Handler = async(event) => {
   console.error('bot')

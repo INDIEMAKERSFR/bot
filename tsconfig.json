@@ -5,13 +5,13 @@
       "target": "es2018",
       "esModuleInterop": true,
       "declaration": true,
-      "outDir": "functions/built",
+      "outDir": "netlify/built",
       "strict": true,
       "allowJs": true,
       "sourceMap": true,
     },
     "exclude": [
       "node_modules",
-      "functions/built"
+      "netlify/built"
     ]
   }
