@@ -7,7 +7,7 @@ import { Footer, Author, Field, Embed, DiscordMessage, User, Image } from '../..
 import { getConfig, saveRateLimit } from '../../firebase/discord'
 import { sendError } from '../../firebase/error'
 
-const { post, patch, get } = axios
+const { post, get } = axios
 
 export interface ResBot {
   content: string
@@ -252,14 +252,15 @@ export const sendTxtLater = async (
     embeds,
   }
   try {
-    const res = await patch(url, body)
+    // const res = await patch(url, body)
+    await sendChannel(channelId, res, embeds)
     if (rest.length > 0) {
       for (let index = 0; index < rest.length; index++) {
         const element = rest[index]
         await sendChannel(channelId, element)
       }
     }
-    return res.data
+    return
   } catch (err: any) {
     if (err.response) {
       // Request made and server responded
@@ -277,7 +278,8 @@ export const sendTxtLater = async (
     }
     // console.error('sendTxtLater content', url, JSON.stringify(content))
     try {
-      await patch(url, { content: "🤖 Oups, previens mon créateur j'ai un bug!" })
+      // await patch(url, { content: "🤖 Oups, previens mon créateur j'ai un bug!" })
+      await sendChannel(channelId, "🤖 Oups, previens mon créateur j'ai un bug!")
     } catch (errErr: any) {
       console.error('sendTxtLaterFallback', errErr.response)
       await sendError({ function: 'sendTxtLaterFallback', error: JSON.stringify(errErr), url, body })
@@ -479,7 +481,7 @@ export const getLastChannelMessage = async (userId: string, channelId: string): 
   return message
 }
 
-export const sendChannel = async (channelId: string, content: string, embed: Embed | undefined = undefined): Promise<any> => {
+export const sendChannel = async (channelId: string, content: string, embeds: Embed[] | undefined = undefined): Promise<any> => {
   const url = `https://discord.com/api/v8/channels/${channelId}/messages`
   const data = await getConfig()
   if (!data) {
@@ -490,8 +492,8 @@ export const sendChannel = async (channelId: string, content: string, embed: Emb
     Authorization: `Bot ${process.env.BOT_TOKEN ? process.env.BOT_TOKEN : data.discord.bot_token}`,
   }
   const body: any = { content }
-  if (embed) {
-    body.embed = embed
+  if (embeds) {
+    body.embeds = embeds
   }
   if (data.discordResetAfter && data.discordResetAfter > 0) {
     console.error('Sleep a bit', data.discordResetAfter)
