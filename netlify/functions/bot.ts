@@ -21,10 +21,15 @@ export const handler: Handler = async(event) => {
     const body = JSON.parse(event.body || '{}')
     if (event.body && body.type === InteractionType.APPLICATION_COMMAND && body.data) {
       try {
+        const data = await discordInteraction(body.data)
+        console.log('data', data)
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(await discordInteraction(body))
+          body: JSON.stringify({
+              type: InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE,
+              data
+          })
         }
       } catch (e) {
         console.error('bot', e)
