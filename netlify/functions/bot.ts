@@ -9,7 +9,8 @@ export const handler: Handler = async(event) => {
   try {
     const signature = String(event.headers ? event.headers['x-signature-ed25519'] : '')
     const timestamp = String(event.headers ? event.headers['x-signature-timestamp'] : '')
-    const isValidRequest = await verifyKey(event.body as string, signature, timestamp, String(process.env.CLIENT_PUBLIC_KEY))
+    const rawBody = String(event.body).replace(/'/g, '\'').replace(/\\'/g,"'")
+    const isValidRequest = await verifyKey(rawBody as string, signature, timestamp, String(process.env.CLIENT_PUBLIC_KEY))
     if (!isValidRequest) {
       return {
         statusCode: 401,
