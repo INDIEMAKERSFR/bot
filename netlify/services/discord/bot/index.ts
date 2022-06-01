@@ -11,7 +11,9 @@ import { postFn } from './post'
 const im = (interaction: Interaction, option: ApplicationCommandInteractionDataOption, senderId: string): Promise<any> => {
   try {
     if (option.name === 'karma' && option.options && option.options.length > 0) {
-      return karmaFn(option.options[0], senderId)
+      return karmaFn(interaction, option.options[0], senderId).then(() => ({
+        content: "..."
+      }))
     }
     if (option.name === 'projet' && option.options && option.options.length > 0) {
       return projectFn(interaction, option.options[0], senderId).then(() => ({

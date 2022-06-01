@@ -1,8 +1,8 @@
-import { ApplicationCommandInteractionDataOption } from '../command'
-import { addKarmaById, getKarmaById } from '../../firebase/karma'
-import { updateUser, getAllUsers } from '../../firebase/discord'
-import { openChannel, ResBot, sendChannel } from './utils'
-import { KarmaAll, User } from '../../types'
+import { Interaction, ApplicationCommandInteractionDataOption } from '../command'
+import { addKarmaById, getKarmaById } from '../../../services/firebase/karma'
+import { updateUser, getAllUsers } from '../../../services/firebase/discord'
+import { openChannel, sendChannel, sendTxtLater } from './utils'
+import { KarmaAll, User } from './../../types'
 
 const afterAdd = async (value: number, userId: string, curKarma: KarmaAll): Promise<string> => {
   const botString =
@@ -20,41 +20,41 @@ const afterAdd = async (value: number, userId: string, curKarma: KarmaAll): Prom
   return botString
 }
 
-const karmaAdd = async (option: ApplicationCommandInteractionDataOption, senderId: string): Promise<ResBot> => {
+const karmaAdd = async (interaction: Interaction, option: ApplicationCommandInteractionDataOption, senderId: string): Promise<void> => {
   const userId = option.value
   if (userId) {
     console.error('add karma userId', userId)
     if (senderId === userId) {
-      return { content: "Tu ne peux pas t'ajouter du karma toi même !" }
+      return sendTxtLater("Tu ne peux pas t'ajouter du karma toi même !", [], interaction.application_id, interaction.token, interaction.channel_id)
     }
     try {
       console.error('start addKarmaById')
       const currentKarma = await addKarmaById(userId, senderId, 1)
       console.error('addKarmaById')
       const botString = await afterAdd(1, userId, currentKarma)
-      console.error('afterAdd', botString)
-      return { content: botString }
+      console.error('afterAdd')
+      return sendTxtLater(botString, [], interaction.application_id, interaction.token, interaction.channel_id)
     } catch (err) {
       console.error('karmaAdd', err)
-      return { content: 'Erreur karma' }
+      return sendTxtLater('Erreur karma', [], interaction.application_id, interaction.token, interaction.channel_id)
     }
   } else {
-    return { content: 'Donne moi un Maker 👨‍🌾 !' }
+    return sendTxtLater('Donne moi un Maker 👨‍🌾 !', [], interaction.application_id, interaction.token, interaction.channel_id)
   }
 }
 
-const karmaRm = async (option: ApplicationCommandInteractionDataOption, senderId: string): Promise<ResBot> => {
+const karmaRm = async (interaction: Interaction, option: ApplicationCommandInteractionDataOption, senderId: string): Promise<void> => {
   const userId = option.value
   if (!userId) {
-    return { content: 'Donne moi un Maker 👨‍🌾 !' }
+    return sendTxtLater('Donne moi un Maker 👨‍🌾 !', [], interaction.application_id, interaction.token, interaction.channel_id)
   }
   console.error('remove karma userId', userId)
   if (senderId === userId) {
-    return { content: 'Tu ne peux pas te prendre du karma toi même !' }
+    return sendTxtLater('Tu ne peux pas te prendre du karma toi même !', [], interaction.application_id, interaction.token, interaction.channel_id)
   }
   const currentKarma = await addKarmaById(userId, senderId, -1)
   const botString = await afterAdd(1, userId, currentKarma)
-  return { content: botString }
+  return sendTxtLater(botString, [], interaction.application_id, interaction.token, interaction.channel_id)
 }
 
 const generateKarmaStats = async (): Promise<string> => {
@@ -67,37 +67,42 @@ const generateKarmaStats = async (): Promise<string> => {
   return result
 }
 
-const karmaStats = async (option: ApplicationCommandInteractionDataOption): Promise<ResBot> => {
+const karmaStats = async (interaction: Interaction, option: ApplicationCommandInteractionDataOption): Promise<void> => {
   const userId = option.value
   if (userId) {
     console.error('stats karma userId', userId)
     const curKarma = await getKarmaById(userId)
-    return { content: `<@${userId}> as ${curKarma.total} karma 🕉!` }
+    return sendTxtLater(`<@${userId}> as ${curKarma.total} karma 🕉!`, [], interaction.application_id, interaction.token, interaction.channel_id)
   } else {
-    return { content: 'Donne moi un Maker 👨‍🌾 !' }
+    return sendTxtLater('Donne moi un Maker 👨‍🌾 !', [], interaction.application_id, interaction.token, interaction.channel_id)
   }
 }
 
-const karmaLadder = async (): Promise<ResBot> => {
+const karmaLadder = async (interaction: Interaction): Promise<void> => {
   console.error('stats karma global')
-  return {
-    content: `Voici le classement karma de tous les makers:
+  return sendTxtLater(
+    `Voici le classement karma de tous les makers:
+
 ${await generateKarmaStats()}`,
-  }
+    [],
+    interaction.application_id,
+    interaction.token,
+    interaction.channel_id
+  )
 }
 
-export const karmaFn = (option: ApplicationCommandInteractionDataOption, senderId: string): Promise<any> => {
+export const karmaFn = (interaction: Interaction, option: ApplicationCommandInteractionDataOption, senderId: string): Promise<void> => {
   if (option.name === 'donner' && option.options && option.options.length > 0) {
-    return karmaAdd(option.options[0], senderId)
+    return karmaAdd(interaction, option.options[0], senderId)
   }
   if (option.name === 'enlever' && option.options && option.options.length > 0) {
-    return karmaRm(option.options[0], senderId)
+    return karmaRm(interaction, option.options[0], senderId)
   }
   if (option.name === 'voir' && option.options && option.options.length > 0) {
-    return karmaStats(option.options[0])
+    return karmaStats(interaction, option.options[0])
   }
   if (option.name === 'classement') {
-    return karmaLadder()
+    return karmaLadder(interaction)
   }
-  return Promise.resolve({ content: `La Commande ${option.name} n'est pas pris en charge 🤫` })
+  return sendTxtLater(`La Commande ${option.name} n'est pas pris en charge 🤫`, [], interaction.application_id, interaction.token, interaction.channel_id)
 }
