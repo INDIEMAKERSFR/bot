@@ -22,7 +22,7 @@ export const handler: Handler = async(event) => {
     if (event.body && body.type === InteractionType.APPLICATION_COMMAND && body.data) {
       try {
         const data = await discordInteraction(body)
-        console.log('data', data)
+        // console.log('data', data)
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
