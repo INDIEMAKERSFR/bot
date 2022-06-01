@@ -87,7 +87,7 @@ const postList = async (interaction: Interaction, userId: string, me = false): P
     for (let index = 0; index < cards.length; index++) {
       const card = cards[index]
       console.error('card', card)
-      const result = await sendChannel(interaction.channel_id, '', card)
+      const result = await sendChannel(interaction.channel_id, '', [card])
       if (result?.response?.headers['x-ratelimit-reset-after']) {
         const lenSize = Number(result.response.headers['x-ratelimit-reset-after']) * 1000
         console.error('Sleep a bit', lenSize)
