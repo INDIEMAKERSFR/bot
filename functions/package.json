@@ -16,6 +16,7 @@
   "main": "lib/functions/src/index.js",
   "dependencies": {
     "axios": "^0.27.2",
+    "dayjs": "^1.11.2",
     "elegant-slug": "^0.0.2",
     "find-hashtags": "^1.0.1",
     "firebase-admin": "^10.0.2",
