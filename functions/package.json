@@ -17,6 +17,8 @@
   "dependencies": {
     "axios": "^0.27.2",
     "dayjs": "^1.11.2",
+    "discord-interactions": "^3.2.0",
+    "dotenv": "^16.0.1",
     "elegant-slug": "^0.0.2",
     "find-hashtags": "^1.0.1",
     "firebase-admin": "^10.0.2",
@@ -24,7 +26,9 @@
     "get-urls": "^10.0.1",
     "imagekit": "^3.2.5",
     "mentions": "^1.0.2",
+    "metadata-scraper": "^0.2.55",
     "rss-parser": "^3.12.0",
+    "stripe": "^9.6.0",
     "twitter": "^1.7.1"
   },
   "devDependencies": {
